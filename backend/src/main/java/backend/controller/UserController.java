@@ -2,6 +2,7 @@ package backend.controller;
 
 import backend.entity.User;
 import backend.service.UserService;
+import backend.dto.UserRequestDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +19,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public User createUser(
-            @RequestBody User user) {
+ @PostMapping
+public User createUser(
+        @RequestBody UserRequestDTO dto) {
 
-        return userService.saveUser(user);
+    return userService.saveUser(dto);
 
-    }
+}
 
     @GetMapping
     public List<User> getAllUsers() {
