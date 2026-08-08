@@ -22,6 +22,16 @@ public class ComplaintRequestDTO {
     @NotBlank(message = "Priority is required")
     private String priority;
 
+    private String zone;
+
+    public String getZone() {
+        return zone;
+    }
+     
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
     public ComplaintRequestDTO() {
     }
 

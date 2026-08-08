@@ -27,6 +27,17 @@ public class Complaint {
 
     private LocalDateTime createdAt;
 
+    private String zone;
+
+    public String getZone() {
+        return zone;
+    }
+     
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
+
     public Complaint() {
         this.createdAt = LocalDateTime.now();
     }

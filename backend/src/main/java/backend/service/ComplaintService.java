@@ -1,14 +1,27 @@
 package backend.service;
 
+import java.util.List;
+import backend.entity.Staff;
+import backend.entity.Task;
+import backend.repository.StaffRepository;
+import backend.repository.TaskRepository;
+
+import java.time.LocalDateTime;
 import backend.dto.ComplaintRequestDTO;
 import backend.entity.Complaint;
 import backend.repository.ComplaintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
 
 public class ComplaintService {
+    @Autowired
+private StaffRepository staffRepository;
+
+@Autowired
+private TaskRepository taskRepository;
     public void deleteComplaint(Long id) {
 
 
@@ -41,6 +54,8 @@ return complaintRepository.save(complaint);
     public java.util.List<Complaint> getAllComplaints() {
 return complaintRepository.findAll();
 }
+
+
 public Complaint getComplaintById(Long id) {
 return complaintRepository.findById(id)
 .orElseThrow(() ->
@@ -49,19 +64,63 @@ new RuntimeException("Complaint not found"));
 
 
 
+    
     public Complaint createComplaint(ComplaintRequestDTO dto) {
 
-        Complaint complaint = new Complaint();
+    Complaint complaint = new Complaint();
+    complaint.setZone(dto.getZone());
 
-        complaint.setTitle(dto.getTitle());
-        complaint.setDescription(dto.getDescription());
-        complaint.setPhotoUrl(dto.getPhotoUrl());
-        complaint.setLatitude(dto.getLatitude());
-        complaint.setLongitude(dto.getLongitude());
-        complaint.setPriority(dto.getPriority());
+    complaint.setTitle(dto.getTitle());
+    complaint.setDescription(dto.getDescription());
+    complaint.setPhotoUrl(dto.getPhotoUrl());
+    complaint.setLatitude(dto.getLatitude());
+    complaint.setLongitude(dto.getLongitude());
+    complaint.setPriority(dto.getPriority());
 
-        complaint.setStatus("PENDING");
+    complaint.setStatus("PENDING");
 
-        return complaintRepository.save(complaint);
+    // Save complaint first
+    Complaint savedComplaint = complaintRepository.save(complaint);
+
+    // Find available staff
+    // Find available staff in same zone
+List<Staff> staffList =
+        staffRepository.findByZoneAndAvailableTrue(
+                complaint.getZone());
+
+if (!staffList.isEmpty()) {
+
+    Staff staff = null;
+    long minTasks = Long.MAX_VALUE;
+
+    for (Staff s : staffList) {
+
+        long taskCount =
+                taskRepository.countByStaffId(s.getId());
+
+        if (taskCount < minTasks) {
+
+            minTasks = taskCount;
+            staff = s;
+        }
     }
+    Task task = new Task(); 
+
+    task.setComplaintId(savedComplaint.getId());
+    task.setStaffId(staff.getId());
+    task.setStatus("ASSIGNED");
+    task.setAssignedAt(LocalDateTime.now());
+
+    taskRepository.save(task);
+
+    savedComplaint.setStatus("ASSIGNED");
+    complaintRepository.save(savedComplaint);
+
+    staff.setAvailable(false);
+    staffRepository.save(staff);
+}
+
+    return savedComplaint;
+    
+}
 }

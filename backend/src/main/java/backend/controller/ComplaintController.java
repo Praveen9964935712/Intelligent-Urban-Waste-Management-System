@@ -9,27 +9,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-@RestController
-@RequestMapping("/api/complaints")
-public class ComplaintController {
+    @RestController
+    @RequestMapping("/api/complaints")
+    public class ComplaintController {
     @GetMapping
-public java.util.List<Complaint> getAllComplaints() {
-return complaintService.getAllComplaints();
-}
-@GetMapping("/{id}")
-public Complaint getComplaintById(@PathVariable Long id) {
-return complaintService.getComplaintById(id);
-}
-@DeleteMapping("/{id}")
-public String deleteComplaint(@PathVariable Long id) {
+    public java.util.List<Complaint> getAllComplaints() {
+    return complaintService.getAllComplaints();
+    }
+    @GetMapping("/{id}")
+    public Complaint getComplaintById(@PathVariable Long id) {
+    return complaintService.getComplaintById(id);
+    }
+    @DeleteMapping("/{id}")
+    public String deleteComplaint(@PathVariable Long id) {
 
 
-complaintService.deleteComplaint(id);
+    complaintService.deleteComplaint(id);
 
-return "Complaint deleted successfully";
+    return "Complaint deleted successfully";
 
 
-}
+    }
 
 @PutMapping("/{id}/status")
 public Complaint updateComplaintStatus(
@@ -41,16 +41,12 @@ return complaintService.updateComplaintStatus(id, status);
 
 
 }
-
-
-
-
-    @Autowired
+     @Autowired
     private ComplaintService complaintService;
 
     @PostMapping
     public Complaint createComplaint(
-            @Valid @RequestBody ComplaintRequestDTO complaintDTO) {
+    @Valid @RequestBody ComplaintRequestDTO complaintDTO) {
 
         return complaintService.createComplaint(complaintDTO);
     }
