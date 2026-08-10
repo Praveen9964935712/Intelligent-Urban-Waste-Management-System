@@ -1,5 +1,7 @@
 package backend.controller;
 
+import backend.entity.Notification;
+import backend.dto.ComplaintTrendDTO;
 import backend.entity.Complaint;
 import backend.dto.PriorityStatsDTO;
 import backend.dto.ComplaintHistoryDTO;
@@ -40,10 +42,29 @@ public class DashboardController {
     return dashboardService.getPriorityStats();
     }
 
+    @GetMapping("/status")
+    public java.util.List getStatusStats() {
+
+    return dashboardService.getStatusStats();
+    }
+
+
+    @GetMapping("/staff-workload")
+    public List<backend.dto.StaffWorkloadDTO> getStaffWorkload() {
+    return dashboardService.getStaffWorkload();
+    }
+
     @GetMapping("/recent-complaints")
     public List<Complaint> getRecentComplaints() {
 
         return dashboardService.getRecentComplaints();
+    }
+
+    @GetMapping("/complaint-trend")
+    public java.util.List<ComplaintTrendDTO> getComplaintTrend() {
+
+    return dashboardService.getComplaintTrend();
+
     }
 
     @GetMapping("/task-stats")
@@ -57,4 +78,10 @@ public class DashboardController {
         return dashboardService.getComplaintHistory();
     } 
 
+
+    @GetMapping("/activity")
+    public List<Notification> getRecentActivity() {
+
+    return dashboardService.getRecentActivity();
+}
 }

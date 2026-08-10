@@ -24,6 +24,19 @@ GROUP BY s.id, s.name
 """)
 java.util.List<StaffPerformanceDTO> getStaffPerformance();
 
+@Query("""
+SELECT new backend.dto.StaffWorkloadDTO(
+s.name,
+COUNT(t.id)
+)
+FROM Staff s
+LEFT JOIN Task t
+ON s.id = t.staffId
+AND t.status = 'ASSIGNED'
+GROUP BY s.name
+""")
+List<backend.dto.StaffWorkloadDTO> getStaffWorkload();
+
 List<Task> findByStaffId(Long staffId);
 
 Long countByStatus(String status);

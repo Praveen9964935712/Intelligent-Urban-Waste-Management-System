@@ -19,6 +19,10 @@ import java.time.LocalDateTime;
 
 @Service
 public class TaskService {
+
+@Autowired
+private NotificationService notificationService;
+
 @Autowired
 private ComplaintRepository complaintRepository;
 
@@ -45,6 +49,12 @@ public Task completeTask(Long taskId) {
 
     complaint.setStatus("RESOLVED");
 
+    notificationService.createNotification(
+        "Complaint #" +
+                complaint.getId() +
+                " resolved",
+        "RESOLVED");
+
 complaintRepository.save(complaint);
 
 // Make staff available again
@@ -54,6 +64,12 @@ Staff staff = staffRepository.findById(task.getStaffId())
 staff.setAvailable(true);
 
 staffRepository.save(staff);
+
+notificationService.createNotification(
+        "Staff " +
+                staff.getName() +
+                " became available",
+        "STAFF_AVAILABLE");
 
 return taskRepository.save(task);
 }

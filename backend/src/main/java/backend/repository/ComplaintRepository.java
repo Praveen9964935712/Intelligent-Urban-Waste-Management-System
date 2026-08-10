@@ -1,5 +1,8 @@
 package backend.repository;
 
+
+import backend.entity.User;
+import backend.dto.ComplaintTrendDTO;
 import backend.dto.ZoneStatsDTO;
 import org.springframework.data.jpa.repository.Query;
 import backend.entity.Complaint;
@@ -32,7 +35,30 @@ java.util.List<ZoneStatsDTO> getZoneStatistics();
     GROUP BY c.priority
     """)
 java.util.List<backend.dto.PriorityStatsDTO> getPriorityStatistics();
-    
-java.util.List<Complaint> findTop5ByOrderByCreatedAtDesc();
+
+@Query("""
+SELECT new backend.dto.ComplaintStatusDTO(
+c.status,
+COUNT(c)
+)
+FROM Complaint c
+GROUP BY c.status
+""")
+List<backend.dto.ComplaintStatusDTO> getStatusStatistics();
+
+@Query("""
+SELECT new backend.dto.ComplaintTrendDTO(
+CAST(c.createdAt AS string),
+COUNT(c)
+)
+FROM Complaint c
+GROUP BY CAST(c.createdAt AS string)
+ORDER BY CAST(c.createdAt AS string)
+""")
+List<ComplaintTrendDTO> getComplaintTrend();
+
+List<Complaint> findTop5ByOrderByCreatedAtDesc();
+
+List<Complaint> findByCreatedBy(User user);
 
 }

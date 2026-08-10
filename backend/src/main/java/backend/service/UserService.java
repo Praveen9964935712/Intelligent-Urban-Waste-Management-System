@@ -1,5 +1,7 @@
 package backend.service;
 
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import backend.entity.User;
 import backend.repository.UserRepository;
 import backend.dto.UserRequestDTO;
@@ -12,11 +14,15 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(
-            UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
 
-        this.userRepository = userRepository;
-    }
+   public UserService(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder) {
+
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+}
 
     public User saveUser(User user) {
 
@@ -35,7 +41,15 @@ public class UserService {
 
     user.setName(dto.getName());
     user.setEmail(dto.getEmail());
-    user.setPassword(dto.getPassword());
+
+
+    user.setPassword(
+        passwordEncoder.encode(
+                dto.getPassword()
+        )
+);
+
+
     user.setPhone(dto.getPhone());
     user.setRole(dto.getRole());
 

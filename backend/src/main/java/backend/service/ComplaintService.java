@@ -1,5 +1,11 @@
 package backend.service;
 
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import backend.entity.User;
+import backend.repository.UserRepository;
+
 import java.util.List;
 import backend.entity.Staff;
 import backend.entity.Task;
@@ -14,10 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+
 @Service
 
 public class ComplaintService {
-    @Autowired
+
+@Autowired
+private NotificationService notificationService;
+
+@Autowired
 private StaffRepository staffRepository;
 
 @Autowired
@@ -27,7 +38,7 @@ private TaskRepository taskRepository;
 
 Complaint complaint = complaintRepository.findById(id)
         .orElseThrow(() ->
-                new RuntimeException("Complaint not found"));
+new RuntimeException("Complaint not found"));
 
 complaintRepository.delete(complaint);
 
@@ -50,7 +61,18 @@ return complaintRepository.save(complaint);
 
 
     @Autowired
-    private ComplaintRepository complaintRepository;
+    private final ComplaintRepository complaintRepository;
+
+    private final UserRepository userRepository;
+
+    public ComplaintService(
+        ComplaintRepository complaintRepository,
+        UserRepository userRepository) {
+
+    this.complaintRepository = complaintRepository;
+    this.userRepository = userRepository;
+}
+
     public java.util.List<Complaint> getAllComplaints() {
 return complaintRepository.findAll();
 }
@@ -68,16 +90,32 @@ new RuntimeException("Complaint not found"));
     public Complaint createComplaint(ComplaintRequestDTO dto) {
 
     Complaint complaint = new Complaint();
-    complaint.setZone(dto.getZone());
 
-    complaint.setTitle(dto.getTitle());
-    complaint.setDescription(dto.getDescription());
-    complaint.setPhotoUrl(dto.getPhotoUrl());
-    complaint.setLatitude(dto.getLatitude());
-    complaint.setLongitude(dto.getLongitude());
-    complaint.setPriority(dto.getPriority());
+Authentication authentication =
+        SecurityContextHolder
+                .getContext()
+                .getAuthentication();
 
-    complaint.setStatus("PENDING");
+String email = authentication.getName();
+
+User user =
+        userRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+complaint.setCreatedBy(user);
+
+complaint.setZone(dto.getZone());
+
+complaint.setTitle(dto.getTitle());
+complaint.setDescription(dto.getDescription());
+complaint.setPhotoUrl(dto.getPhotoUrl());
+complaint.setLatitude(dto.getLatitude());
+complaint.setLongitude(dto.getLongitude());
+complaint.setPriority(dto.getPriority());
+
+complaint.setStatus("PENDING");
 
     // Save complaint first
     Complaint savedComplaint = complaintRepository.save(complaint);
@@ -113,8 +151,19 @@ if (!staffList.isEmpty()) {
 
     taskRepository.save(task);
 
+    notificationService.createNotification(
+        "Complaint #" +
+                savedComplaint.getId() +
+                " assigned to " +
+                staff.getName(),
+        "ASSIGNMENT");
+
     savedComplaint.setStatus("ASSIGNED");
     complaintRepository.save(savedComplaint);
+
+    notificationService.createNotification(
+        "Complaint #" + savedComplaint.getId() + " created",
+        "COMPLAINT_CREATED");
 
     staff.setAvailable(false);
     staffRepository.save(staff);
@@ -123,4 +172,23 @@ if (!staffList.isEmpty()) {
     return savedComplaint;
     
 }
+
+public List<Complaint> getMyComplaints() {
+
+    Authentication authentication =
+            SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
+
+    String email = authentication.getName();
+
+    User user =
+            userRepository
+                    .findByEmail(email)
+                    .orElseThrow(() ->
+                            new RuntimeException("User not found"));
+
+    return complaintRepository.findByCreatedBy(user);
+}
+
 }

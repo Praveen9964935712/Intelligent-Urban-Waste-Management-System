@@ -1,5 +1,10 @@
 package backend.service;
 
+
+import backend.entity.Notification;
+import backend.repository.NotificationRepository;
+
+import backend.dto.ComplaintTrendDTO;
 import backend.entity.Complaint;
 import backend.dto.PriorityStatsDTO;
 import backend.dto.ComplaintHistoryDTO;
@@ -22,11 +27,16 @@ public class DashboardService {
     @Autowired
     private ComplaintRepository complaintRepository;
 
+    
     @Autowired
     private StaffRepository staffRepository;
 
      @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
 
     public List<ZoneStatsDTO> getZoneStats() {
 
@@ -39,6 +49,15 @@ public class DashboardService {
     return complaintRepository.getPriorityStatistics();
 }
 
+public List<backend.dto.ComplaintStatusDTO> getStatusStats() {
+
+    return complaintRepository.getStatusStatistics();
+}
+
+public List<backend.dto.StaffWorkloadDTO> getStaffWorkload() {
+    return taskRepository.getStaffWorkload();
+}
+
 public List<Complaint> getRecentComplaints() {
 
     return complaintRepository
@@ -47,6 +66,14 @@ public List<Complaint> getRecentComplaints() {
 
 public List<StaffPerformanceDTO> getStaffPerformance() {
     return taskRepository.getStaffPerformance();
+}
+
+
+
+public java.util.List<ComplaintTrendDTO> getComplaintTrend() {
+
+    return complaintRepository.getComplaintTrend();
+
 }
 
     public DashboardResponseDTO getDashboardStats() {
@@ -108,4 +135,10 @@ public List<StaffPerformanceDTO> getStaffPerformance() {
     return dto;
 }
 
-}
+public List<Notification> getRecentActivity() {
+
+    return notificationRepository
+            .findTop10ByOrderByCreatedAtDesc();
+            
+        }
+        }

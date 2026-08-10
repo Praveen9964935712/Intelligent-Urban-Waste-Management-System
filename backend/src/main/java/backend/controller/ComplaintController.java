@@ -1,5 +1,8 @@
 package backend.controller;
 
+
+import java.util.List;
+
 import backend.dto.ComplaintRequestDTO;
 import backend.entity.Complaint;
 import backend.service.ComplaintService;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
     @RestController
     @RequestMapping("/api/complaints")
+
+
     public class ComplaintController {
     @GetMapping
     public java.util.List<Complaint> getAllComplaints() {
@@ -50,4 +55,11 @@ return complaintService.updateComplaintStatus(id, status);
 
         return complaintService.createComplaint(complaintDTO);
     }
+
+    @GetMapping("/my")
+public List<Complaint> getMyComplaints() {
+
+    return complaintService.getMyComplaints();
+}
+
 }

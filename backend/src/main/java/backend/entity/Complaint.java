@@ -29,6 +29,10 @@ public class Complaint {
 
     private String zone;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User createdBy;
+
     public String getZone() {
         return zone;
     }
@@ -113,4 +117,13 @@ public class Complaint {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public User getCreatedBy() {
+    return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+    this.createdBy = createdBy;
+    }
+    
 }
