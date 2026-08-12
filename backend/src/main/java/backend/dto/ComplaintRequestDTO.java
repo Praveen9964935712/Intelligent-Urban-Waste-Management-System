@@ -24,7 +24,7 @@ public class ComplaintRequestDTO {
 
     private String zone;
 
-    public String getZone() {
+    public String getZone(){
         return zone;
     }
      
