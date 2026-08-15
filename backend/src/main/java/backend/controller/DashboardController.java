@@ -1,5 +1,7 @@
 package backend.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import backend.entity.Notification;
 import backend.dto.ComplaintTrendDTO;
 import backend.entity.Complaint;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/dashboard")
+@SecurityRequirement(name = "BearerAuth")
 public class DashboardController {
     
 

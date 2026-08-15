@@ -1,6 +1,6 @@
 package backend.service;
 
-
+import backend.dto.ComplaintResponseDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import backend.entity.User;
@@ -173,7 +173,7 @@ if (!staffList.isEmpty()) {
     
 }
 
-public List<Complaint> getMyComplaints() {
+public List<ComplaintResponseDTO> getMyComplaints() {
 
     Authentication authentication =
             SecurityContextHolder
@@ -186,9 +186,39 @@ public List<Complaint> getMyComplaints() {
             userRepository
                     .findByEmail(email)
                     .orElseThrow(() ->
-                            new RuntimeException("User not found"));
+                            new RuntimeException(
+                                    "User not found"));
 
-    return complaintRepository.findByCreatedBy(user);
+    return complaintRepository
+            .findByCreatedBy(user)
+            .stream()
+            .map(this::convertToDTO)
+            .toList();
 }
 
+
+private ComplaintResponseDTO convertToDTO(
+        Complaint complaint) {
+
+    ComplaintResponseDTO dto =
+            new ComplaintResponseDTO();
+
+    dto.setId(complaint.getId());
+    dto.setTitle(complaint.getTitle());
+    dto.setDescription(complaint.getDescription());
+    dto.setZone(complaint.getZone());
+    dto.setPriority(complaint.getPriority());
+    dto.setStatus(complaint.getStatus());
+    dto.setLatitude(complaint.getLatitude());
+    dto.setLongitude(complaint.getLongitude());
+    dto.setPhotoUrl(complaint.getPhotoUrl());
+
+    if (complaint.getCreatedBy() != null) {
+        dto.setCreatedByName(
+                complaint.getCreatedBy().getName()
+        );
+    }
+
+    return dto;
+}
 }

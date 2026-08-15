@@ -1,5 +1,8 @@
 package backend.config;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import backend.util.JwtFilter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,7 +28,8 @@ public SecurityConfig(JwtFilter jwtFilter) {
 public SecurityFilterChain securityFilterChain(
         HttpSecurity http) throws Exception {
 
-    http
+    http     
+            .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
 
             .sessionManagement(session ->
@@ -58,9 +62,14 @@ public SecurityFilterChain securityFilterChain(
         "/api/complaints/**"
 ).authenticated()
 
-        .anyRequest()
-        .authenticated()
-)
+
+.requestMatchers(
+        "/swagger-ui/**",
+        "/v3/api-docs/**"
+).permitAll()
+
+
+        .anyRequest().authenticated())
 
             .addFilterBefore(
                     jwtFilter,
@@ -68,5 +77,31 @@ public SecurityFilterChain securityFilterChain(
             );
 
     return http.build();
+}
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+
+    CorsConfiguration configuration =
+            new CorsConfiguration();
+
+    configuration.addAllowedOrigin(
+            "http://localhost:5173"
+    );
+
+    configuration.addAllowedHeader("*");
+
+    configuration.addAllowedMethod("*");
+
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
+
+    source.registerCorsConfiguration(
+            "/**",
+            configuration
+    );
+
+    return source;
 }
 }

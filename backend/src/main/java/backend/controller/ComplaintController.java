@@ -1,6 +1,6 @@
 package backend.controller;
 
-
+import backend.dto.ComplaintResponseDTO;
 import java.util.List;
 
 import backend.dto.ComplaintRequestDTO;
@@ -17,14 +17,17 @@ import org.springframework.web.bind.annotation.*;
 
 
     public class ComplaintController {
+
     @GetMapping
     public java.util.List<Complaint> getAllComplaints() {
     return complaintService.getAllComplaints();
     }
+
     @GetMapping("/{id}")
     public Complaint getComplaintById(@PathVariable Long id) {
     return complaintService.getComplaintById(id);
     }
+
     @DeleteMapping("/{id}")
     public String deleteComplaint(@PathVariable Long id) {
 
@@ -57,7 +60,7 @@ return complaintService.updateComplaintStatus(id, status);
     }
 
     @GetMapping("/my")
-public List<Complaint> getMyComplaints() {
+    public List<ComplaintResponseDTO> getMyComplaints() {
 
     return complaintService.getMyComplaints();
 }
