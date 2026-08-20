@@ -1,0 +1,7 @@
+import { Eye, Pencil, Power } from "lucide-react";
+
+function StaffTable({ staff, onView, onEdit, onToggle }) {
+  return <div className="staff-table-wrap"><table className="staff-table"><thead><tr><th>Staff member</th><th>Department</th><th>Zone</th><th>Active tasks</th><th>Resolved</th><th>Availability</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>{staff.map((member) => <tr key={member.id}><td><button type="button" className="staff-name-button" onClick={() => onView(member)}><span className="staff-avatar">{member.name?.slice(0, 1).toUpperCase()}</span><span><strong>{member.name}</strong><small>{member.email}</small></span></button></td><td>{member.department || "Unassigned"}</td><td>{member.zone || "All zones"}</td><td>{member.assignedTasks}</td><td>{member.resolvedComplaints}</td><td><span className={`availability-badge ${member.available ? "is-active" : "is-inactive"}`}>{member.available ? "Active" : "Inactive"}</span></td><td><div className="staff-row-actions"><button type="button" onClick={() => onView(member)} title="View profile"><Eye size={16} /></button><button type="button" onClick={() => onEdit(member)} title="Edit staff"><Pencil size={16} /></button><button type="button" onClick={() => onToggle(member)} title={member.available ? "Deactivate staff" : "Activate staff"}><Power size={16} /></button></div></td></tr>)}</tbody></table></div>;
+}
+
+export default StaffTable;
