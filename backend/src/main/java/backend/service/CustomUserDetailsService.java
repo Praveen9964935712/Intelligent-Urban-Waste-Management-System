@@ -32,9 +32,14 @@ public class CustomUserDetailsService
                         new UsernameNotFoundException(
                                 "User not found"));
 
+        String role = user.getRole() == null ? "" : user.getRole().trim().toUpperCase();
+        if (role.startsWith("ROLE_")) {
+            role = role.substring("ROLE_".length());
+        }
+
         return new org.springframework.security.core.userdetails.User(
         user.getEmail(),
         user.getPassword(),
-        java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority( "ROLE_" + user.getRole() )));
+        java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role)));
     }
 }

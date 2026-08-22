@@ -44,18 +44,18 @@ public Task completeTask(Long taskId) {
     task.setStatus("COMPLETED");
     task.setCompletedAt(LocalDateTime.now());
 
-    Complaint complaint = complaintRepository.findById(task.getComplaintId())
-            .orElseThrow(() -> new RuntimeException("Complaint not found"));
+    Complaint complaint = complaintRepository.findById(task.getComplaintId()).orElse(null);
 
-    complaint.setStatus("RESOLVED");
-
-    notificationService.createNotification(
-        "Complaint #" +
-                complaint.getId() +
-                " resolved",
-        "RESOLVED");
-
-complaintRepository.save(complaint);
+    if (complaint != null) {
+        complaint.setStatus("RESOLVED");
+        notificationService.createNotification(
+            "Complaint #" +
+                    complaint.getId() +
+                    " resolved",
+            "RESOLVED",
+            complaint.getCreatedBy());
+        complaintRepository.save(complaint);
+    }
 
 // Make staff available again
 Staff staff = staffRepository.findById(task.getStaffId())

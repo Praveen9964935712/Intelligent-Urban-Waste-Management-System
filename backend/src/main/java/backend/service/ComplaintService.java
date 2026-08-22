@@ -156,14 +156,16 @@ if (!staffList.isEmpty()) {
                 savedComplaint.getId() +
                 " assigned to " +
                 staff.getName(),
-        "ASSIGNMENT");
+        "ASSIGNMENT",
+        user);
 
     savedComplaint.setStatus("ASSIGNED");
     complaintRepository.save(savedComplaint);
 
     notificationService.createNotification(
         "Complaint #" + savedComplaint.getId() + " created",
-        "COMPLAINT_CREATED");
+        "COMPLAINT_CREATED",
+        user);
 
     staff.setAvailable(false);
     staffRepository.save(staff);

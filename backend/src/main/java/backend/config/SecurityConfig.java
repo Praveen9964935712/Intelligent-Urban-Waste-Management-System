@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 public class SecurityConfig {
@@ -38,6 +39,8 @@ public SecurityFilterChain securityFilterChain(
 
             .authorizeHttpRequests(auth -> auth
 
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
         .requestMatchers(
                 "/api/auth/**"
         ).permitAll()
@@ -58,9 +61,22 @@ public SecurityFilterChain securityFilterChain(
                 "/api/users/**"
         ).hasRole("ADMIN")
 
-       .requestMatchers(
-        "/api/complaints/**"
-).authenticated()
+               .requestMatchers(
+                "/api/task-management/**",
+                "/api/staff-management/**"
+        ).hasRole("ADMIN")
+
+               .requestMatchers(HttpMethod.POST, "/api/complaints").hasRole("CITIZEN")
+
+               .requestMatchers(HttpMethod.GET, "/api/complaints/my").hasRole("CITIZEN")
+
+               .requestMatchers(
+                "/api/complaints/**"
+        ).hasRole("ADMIN")
+
+               .requestMatchers(
+                "/api/citizen-portal/**"
+        ).hasRole("CITIZEN")
 
 
 .requestMatchers(

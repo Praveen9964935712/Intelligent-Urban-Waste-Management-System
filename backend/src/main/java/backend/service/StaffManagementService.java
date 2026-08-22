@@ -14,6 +14,9 @@ import backend.entity.Task;
 import backend.repository.ComplaintRepository;
 import backend.repository.StaffRepository;
 import backend.repository.TaskRepository;
+import backend.repository.UserRepository;
+import backend.entity.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
@@ -27,11 +30,15 @@ public class StaffManagementService {
     private final StaffRepository staffRepository;
     private final ComplaintRepository complaintRepository;
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public StaffManagementService(StaffRepository staffRepository, ComplaintRepository complaintRepository, TaskRepository taskRepository) {
+    public StaffManagementService(StaffRepository staffRepository, ComplaintRepository complaintRepository, TaskRepository taskRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.staffRepository = staffRepository;
         this.complaintRepository = complaintRepository;
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public StaffPageResponseDTO listStaff(String search, String department, String zone, Boolean available,
@@ -76,7 +83,17 @@ public class StaffManagementService {
         Staff staff = new Staff();
         apply(staff, request);
         if (staff.getAvailable() == null) staff.setAvailable(true);
-        return toListItem(staffRepository.save(staff));
+        Staff saved = staffRepository.save(staff);
+        if (userRepository.findByEmail(saved.getEmail()).isEmpty()) {
+            User user = new User();
+            user.setName(saved.getName());
+            user.setEmail(saved.getEmail());
+            user.setPhone(saved.getPhone());
+            user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
+            user.setRole("STAFF");
+            userRepository.save(user);
+        }
+        return toListItem(saved);
     }
 
     @Transactional

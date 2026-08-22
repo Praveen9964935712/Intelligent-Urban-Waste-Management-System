@@ -20,4 +20,14 @@ public class NotificationController {
         return notificationService
                 .getRecentNotifications();
     }
+
+    @PutMapping("/{id}/read")
+    public Notification markRead(@PathVariable Long id) {
+        return notificationService.markRead(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteNotification(@PathVariable Long id) {
+        notificationService.deleteNotification(id);
+    }
 }

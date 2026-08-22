@@ -2,6 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login/Login";
 import AdminDashboard from "../pages/Admin/AdminDashboard";
+import ComplaintsPage from "../pages/Admin/ComplaintsPage";
+import TaskManagementPage from "../pages/Admin/TaskManagement/TaskManagementPage";
+import StaffManagementPage from "../pages/Admin/StaffManagement/StaffManagementPage";
+import ReportsAnalyticsPage from "../pages/Admin/ReportsAnalytics/ReportsAnalyticsPage";
+import SettingsPage from "../pages/Admin/SettingsPage";
 import CitizenDashboard from "../pages/Citizen/CitizenDashboard";
 
 import ProtectedRoute from "./ProtectedRoute";
@@ -26,6 +31,51 @@ function AppRoutes() {
           element={
             <ProtectedRoute role="ADMIN">
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/complaints"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <ComplaintsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/tasks"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <TaskManagementPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/staff"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <StaffManagementPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <ReportsAnalyticsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/settings"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <SettingsPage />
             </ProtectedRoute>
           }
         />

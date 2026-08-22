@@ -5,6 +5,7 @@ import backend.dto.LoginResponseDTO;
 import backend.util.JwtUtil;
 
 import backend.dto.LoginRequestDTO;
+import backend.dto.UserRequestDTO;
 import backend.entity.User;
 import backend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,4 +54,19 @@ public class AuthService {
             user.getName(),
             user.getRole());
 }
+
+        public void registerCitizen(UserRequestDTO dto) {
+                if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+                        throw new RuntimeException("An account with this email already exists");
+                }
+
+                User user = new User();
+                user.setName(dto.getName());
+                user.setEmail(dto.getEmail());
+                user.setPhone(dto.getPhone());
+                user.setPassword(passwordEncoder.encode(dto.getPassword()));
+                String requestedRole = dto.getRole() == null ? "CITIZEN" : dto.getRole().trim().toUpperCase();
+                user.setRole("STAFF".equals(requestedRole) ? "STAFF" : "CITIZEN");
+                userRepository.save(user);
+        }
 }

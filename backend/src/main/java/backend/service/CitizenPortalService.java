@@ -54,7 +54,7 @@ public class CitizenPortalService {
                 countStatus(complaints, "PENDING"),
                 countStatus(complaints, "ASSIGNED"),
                 countStatus(complaints, "RESOLVED"));
-        return new CitizenDashboardDTO(stats, complaints, notificationRepository.findTop10ByOrderByCreatedAtDesc());
+        return new CitizenDashboardDTO(stats, complaints, notificationRepository.findTop10ByRecipientOrderByCreatedAtDesc(user));
     }
 
     public CitizenComplaintDTO getComplaint(Long complaintId) {
@@ -72,7 +72,6 @@ public class CitizenPortalService {
     public CitizenProfileDTO updateProfile(CitizenProfileUpdateDTO request) {
         User user = currentUser();
         user.setName(request.getName());
-        user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         return toProfile(userRepository.save(user));
     }
