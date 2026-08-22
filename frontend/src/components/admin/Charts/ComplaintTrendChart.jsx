@@ -65,18 +65,11 @@ function ComplaintTrendChart() {
           <Legend />
           <Line
             type="monotone"
-            dataKey="complaints"
+            dataKey="count"
+            name="complaints"
             stroke="#3b82f6"
             strokeWidth={2}
             dot={{ fill: "#3b82f6", r: 4 }}
-            activeDot={{ r: 6 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="resolved"
-            stroke="#10b981"
-            strokeWidth={2}
-            dot={{ fill: "#10b981", r: 4 }}
             activeDot={{ r: 6 }}
           />
         </LineChart>

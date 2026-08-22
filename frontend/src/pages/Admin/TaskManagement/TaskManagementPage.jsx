@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ClipboardList, Clock3, Plus, RefreshCw, CircleCheck, Timer } from "lucide-react";
 import AdminLayout from "../../../layouts/AdminLayout";
 import TaskFilters from "../../../components/admin/Tasks/TaskFilters";
@@ -18,7 +19,8 @@ import "../../../components/admin/Tasks/TaskManagement.css";
 const initialFilters = { search: "", status: "ALL", priority: "", sortBy: "assignedAt", sortDirection: "desc", page: 0, size: 10 };
 
 function TaskManagementPage() {
-  const [filters, setFilters] = useState(initialFilters);
+  const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState(() => ({ ...initialFilters, search: searchParams.get("search") || "" }));
   const [tasks, setTasks] = useState([]);
   const [stats, setStats] = useState({ totalTasks: 0, pendingTasks: 0, inProgressTasks: 0, completedTasks: 0 });
   const [pagination, setPagination] = useState({ page: 0, totalPages: 0, totalElements: 0 });
@@ -58,6 +60,7 @@ function TaskManagementPage() {
     setSaving(true);
     try {
       if (modal.mode === "create") await createManagedTask(payload);
+      else if (payload.status === "COMPLETED" && modal.task.status !== "COMPLETED") await completeManagedTask(modal.task.id);
       else await updateManagedTask(modal.task.id, payload);
       setModal({ open: false, mode: "view", task: null });
       await loadData();
@@ -69,11 +72,16 @@ function TaskManagementPage() {
   };
 
   const completeTask = async (task) => {
+    if (saving || task.status === "COMPLETED") return;
+    setSaving(true);
+    setError("");
     try {
       await completeManagedTask(task.id);
       await loadData();
     } catch (requestError) {
       setError(requestError.response?.data?.message || requestError.message || "Unable to complete task.");
+    } finally {
+      setSaving(false);
     }
   };
 

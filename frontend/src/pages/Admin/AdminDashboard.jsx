@@ -19,7 +19,7 @@ function AdminDashboard() {
         {/* Dashboard Header */}
         <div className="dashboard-header">
           <div className="header-content">
-            <h1>City Operations Dashboard</h1>
+            <h1 > City Operations Dashboard</h1>
             <p className="header-subtitle">Real-time waste management system overview</p>
           </div>
           <div className="header-info">

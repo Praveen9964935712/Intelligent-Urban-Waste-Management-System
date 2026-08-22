@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FilePlus2, LocateFixed, X } from "lucide-react";
 import ComplaintTracker from "../../components/citizen/ComplaintTracker";
 import CitizenStatsCards from "../../components/citizen/CitizenStatsCards";
@@ -11,6 +12,7 @@ import {
   updateCitizenProfile,
   uploadComplaintImage,
 } from "../../services/citizenPortalService";
+import { deleteNotification, markNotificationRead } from "../../services/notificationService";
 import "../../components/citizen/CitizenPortal.css";
 
 const emptyComplaint = {
@@ -24,6 +26,7 @@ const emptyComplaint = {
 };
 
 function CitizenDashboard() {
+  const navigate = useNavigate();
   const [dashboard, setDashboard] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -118,6 +121,19 @@ function CitizenDashboard() {
   };
 
   const complaints = dashboard?.complaints || [];
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    navigate("/login");
+  };
+  const markCitizenNotificationRead = async (id) => {
+    const updated = await markNotificationRead(id);
+    setDashboard((current) => ({ ...current, notifications: current.notifications.map((item) => item.id === updated.id ? updated : item) }));
+  };
+  const dismissCitizenNotification = async (id) => {
+    await deleteNotification(id);
+    setDashboard((current) => ({ ...current, notifications: current.notifications.filter((item) => item.id !== id) }));
+  };
 
   return (
     <div className="citizen-dashboard">
@@ -131,6 +147,7 @@ function CitizenDashboard() {
           <div className="citizen-header-actions">
             <button type="button" className="secondary-action" onClick={loadPortal}>Refresh</button>
             <button type="button" className="primary-action" onClick={() => setModal("complaint")}><FilePlus2 size={17} /> Report an issue</button>
+            <button type="button" className="secondary-action" onClick={logout}>Sign out</button>
           </div>
         </header>
 
@@ -142,7 +159,7 @@ function CitizenDashboard() {
             <div className="citizen-panel-heading"><div><span className="citizen-eyebrow">Your activity</span><h2>My complaints</h2></div><span className="citizen-muted">{complaints.length} reports</span></div>
             {loading ? <div className="citizen-empty">Loading your complaints...</div> : complaints.length ? <div className="complaints-list">{complaints.map((complaint) => <ComplaintTracker key={complaint.id} complaint={complaint} onSelect={(item) => { setSelectedComplaint(item); setModal("tracking"); }} />)}</div> : <div className="citizen-empty"><FilePlus2 size={27} /><h3>No complaints yet</h3><p>Your submitted reports will appear here.</p><button type="button" className="primary-action" onClick={() => setModal("complaint")}>Submit your first report</button></div>}
           </section>
-          <div className="citizen-side-column"><NotificationPanel notifications={dashboard?.notifications} /><ProfileCard profile={profile} editing={editingProfile} form={profileForm} onChange={(field, value) => setProfileForm((current) => ({ ...current, [field]: value }))} onEdit={() => setEditingProfile(true)} onCancel={() => setEditingProfile(false)} onSave={saveProfile} saving={saving} /></div>
+          <div className="citizen-side-column"><NotificationPanel notifications={dashboard?.notifications} onRead={markCitizenNotificationRead} onDismiss={dismissCitizenNotification} /><ProfileCard profile={profile} editing={editingProfile} form={profileForm} onChange={(field, value) => setProfileForm((current) => ({ ...current, [field]: value }))} onEdit={() => setEditingProfile(true)} onCancel={() => setEditingProfile(false)} onSave={saveProfile} saving={saving} /></div>
         </div>
       </div>
 

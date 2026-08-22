@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -6,35 +6,40 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import "./TaskStatusOverview.css";
+import { getTaskManagementStats } from "../../../services/taskManagementService";
 
 function TaskStatusOverview() {
-  const [data, setData] = useState([
-    {
-      status: "Completed",
-      tasks: 45,
-      fill: "#10b981",
-    },
-    {
-      status: "In Progress",
-      tasks: 28,
-      fill: "#f59e0b",
-    },
-    {
-      status: "Pending",
-      tasks: 15,
-      fill: "#ef4444",
-    },
-    {
-      status: "On Hold",
-      tasks: 8,
-      fill: "#8b5cf6",
-    },
-  ]);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const loadStats = async () => {
+    try {
+      const stats = await getTaskManagementStats();
+      setData([
+        { status: "Completed", tasks: stats.completedTasks || 0, fill: "#10b981" },
+        { status: "In Progress", tasks: stats.inProgressTasks || 0, fill: "#f59e0b" },
+        { status: "Pending", tasks: stats.pendingTasks || 0, fill: "#ef4444" },
+      ]);
+    } catch (requestError) {
+      setError(requestError.message || "Unable to load task status.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadStatsEvent = useEffectEvent(loadStats);
+  useEffect(() => {
+    const request = setTimeout(() => loadStatsEvent(), 0);
+    return () => clearTimeout(request);
+  }, []);
+
+  if (error) {
+    return <div className="chart-error">Error loading data: {error}</div>;
+  }
 
   if (loading) {
     return <div className="chart-loading">Loading...</div>;

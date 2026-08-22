@@ -1,33 +1,24 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { deleteNotification, getNotifications, markNotificationRead } from "../../../services/notificationService";
 import "./NotificationsPanel.css";
 
 function NotificationsPanel() {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "alert",
-      title: "High Priority Complaint",
-      message: "New urgent complaint in Zone A requires immediate attention",
-      timestamp: new Date(Date.now() - 5 * 60000),
-      read: false,
-    },
-    {
-      id: 2,
-      type: "success",
-      title: "Complaint Resolved",
-      message: "Complaint #1234 has been successfully resolved",
-      timestamp: new Date(Date.now() - 30 * 60000),
-      read: false,
-    },
-    {
-      id: 3,
-      type: "info",
-      title: "Task Assigned",
-      message: "New task assigned to Staff Member John",
-      timestamp: new Date(Date.now() - 2 * 3600000),
-      read: true,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        setNotifications(await getNotifications());
+      } catch (requestError) {
+        setError(requestError.message || "Unable to load notifications.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadNotifications();
+  }, []);
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -57,7 +48,17 @@ function NotificationsPanel() {
     }
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((notification) => !notification.read).length;
+
+  const markRead = async (id) => {
+    const updated = await markNotificationRead(id);
+    setNotifications((current) => current.map((notification) => notification.id === updated.id ? updated : notification));
+  };
+
+  const dismiss = async (id) => {
+    await deleteNotification(id);
+    setNotifications((current) => current.filter((notification) => notification.id !== id));
+  };
 
   return (
     <div className="notifications-panel">
@@ -68,22 +69,24 @@ function NotificationsPanel() {
         )}
       </div>
       <div className="notifications-list">
-        {notifications.map((notification) => (
+        {loading && <p className="notification-time">Loading notifications...</p>}
+        {!loading && error && <p className="notification-time">{error}</p>}
+        {!loading && !error && !notifications.length && <p className="notification-time">No notifications</p>}
+        {!loading && !error && notifications.map((notification) => (
           <div
             key={notification.id}
-            className={`notification-item notification-${notification.type} ${
-              !notification.read ? "unread" : ""
-            }`}
+            className={`notification-item notification-${notification.type?.toLowerCase() || "info"} unread`}
           >
             <div className="notification-icon">
               {getNotificationIcon(notification.type)}
             </div>
             <div className="notification-content">
-              <p className="notification-title">{notification.title}</p>
               <p className="notification-message">{notification.message}</p>
               <p className="notification-time">
-                {formatTime(notification.timestamp)}
+                {formatTime(notification.createdAt)}
               </p>
+              {!notification.read && <button type="button" onClick={() => markRead(notification.id)}>Mark read</button>}
+              <button type="button" onClick={() => dismiss(notification.id)}>Dismiss</button>
             </div>
           </div>
         ))}

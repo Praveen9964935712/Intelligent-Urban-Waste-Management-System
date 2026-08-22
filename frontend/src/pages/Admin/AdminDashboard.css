@@ -6,15 +6,15 @@
 
 /* Dashboard Header */
 .dashboard-header {
-  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-  color: white;
+  background: linear-gradient(135deg, hsl(0, 6%, 93%) 0%, #afc905 100%);
+  color: rgb(189, 27, 51);
   padding: 2rem;
   border-radius: 12px;
   margin-bottom: 2rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(21, 19, 19, 0.1);
 }
 
 .header-content h1 {

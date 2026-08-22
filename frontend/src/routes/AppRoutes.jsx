@@ -7,7 +7,9 @@ import TaskManagementPage from "../pages/Admin/TaskManagement/TaskManagementPage
 import StaffManagementPage from "../pages/Admin/StaffManagement/StaffManagementPage";
 import ReportsAnalyticsPage from "../pages/Admin/ReportsAnalytics/ReportsAnalyticsPage";
 import SettingsPage from "../pages/Admin/SettingsPage";
+import SearchPage from "../pages/Admin/SearchPage";
 import CitizenDashboard from "../pages/Citizen/CitizenDashboard";
+import StaffDashboard from "../pages/Staff/StaffDashboard";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -81,10 +83,28 @@ function AppRoutes() {
         />
 
         <Route
+          path="/admin/search"
+          element={
+            <ProtectedRoute role="ADMIN">
+              <SearchPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/citizen/dashboard"
           element={
             <ProtectedRoute role="CITIZEN">
               <CitizenDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/staff/dashboard"
+          element={
+            <ProtectedRoute role="STAFF">
+              <StaffDashboard />
             </ProtectedRoute>
           }
         />
