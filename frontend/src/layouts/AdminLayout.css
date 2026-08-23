@@ -22,6 +22,11 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  min-width: 0;
+}
+
+.sidebar-overlay {
+  display: none;
 }
 
 /* Responsive Design */
@@ -49,6 +54,17 @@
     margin-left: 0;
   }
 
+  .sidebar-overlay {
+    position: fixed;
+    inset: 70px 0 0;
+    display: block;
+    width: 100%;
+    border: 0;
+    background: rgba(15, 23, 42, 0.35);
+    cursor: pointer;
+    z-index: 150;
+  }
+
   .page-content {
     padding: 1.5rem;
   }
@@ -58,19 +74,4 @@
   .page-content {
     padding: 1rem;
   }
-}
-
-/* Old styles preserved for compatibility */
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.main-section {
-  flex: 1;
-  background: #f5f7fb;
-}
-
-.page-content {
-  padding: 25px;
 }

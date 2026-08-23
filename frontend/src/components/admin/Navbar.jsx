@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getNotifications } from "../../services/notificationService";
 import "./Navbar.css";
 
-function Navbar() {
+function Navbar({ onMenuToggle }) {
   const [showProfile, setShowProfile] = useState(false);
   const [search, setSearch] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
@@ -42,6 +42,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-content">
+        <button className="mobile-menu-button" type="button" onClick={onMenuToggle} aria-label="Open navigation" title="Open navigation">☰</button>
         {/* Logo/Brand */}
         <div className="navbar-brand">
           <span className="brand-icon">🏘️</span>

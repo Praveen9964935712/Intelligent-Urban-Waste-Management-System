@@ -62,6 +62,36 @@
   font-size: 1.15rem;
 }
 
+.complaints-table-panel {
+  display: block;
+  max-width: none;
+  min-width: 0;
+}
+
+.complaints-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.complaints-table-wrap table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.complaints-table-wrap th,
+.complaints-table-wrap td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.settings-form {
+  width: 100%;
+  min-width: 0;
+}
+
 @media (max-width: 700px) {
   .admin-module-placeholder {
     padding: 24px 16px;
@@ -70,5 +100,9 @@
   .admin-module-empty {
     align-items: flex-start;
     padding: 22px;
+  }
+
+  .complaints-table-panel {
+    padding: 16px;
   }
 }

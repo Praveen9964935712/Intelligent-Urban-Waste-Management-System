@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 
-function Sidebar() {
+function Sidebar({ mobileMenuOpen, onClose }) {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,12 +55,13 @@ function Sidebar() {
 
   const handleNavigation = (path) => {
     navigate(path);
+    onClose();
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+    <aside className={`sidebar ${collapsed ? "collapsed" : ""} ${mobileMenuOpen ? "active" : ""}`}>
       {/* Header */}
       <div className="sidebar-header">
         <div className="logo-section">

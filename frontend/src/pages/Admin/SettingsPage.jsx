@@ -42,9 +42,9 @@ function SettingsPage() {
           <h1>Settings</h1>
           <p>Manage workspace preferences and operational defaults for CleanCity.</p>
         </section>
-        <section className="admin-module-empty">
+        <section className="admin-module-empty settings-panel">
           {section === "profile" ? (
-            <form onSubmit={saveProfile}>
+            <form className="settings-form" onSubmit={saveProfile}>
               <h2>Profile settings</h2>
               <label>Display name<input value={profileName} onChange={(event) => { setProfileName(event.target.value); setSaved(false); }} required /></label>
               <p>Your login email and role are managed by your account administrator.</p>
@@ -52,7 +52,7 @@ function SettingsPage() {
               {saved && <p role="status">Profile saved.</p>}
             </form>
           ) : (
-            <form onSubmit={savePreferences}>
+            <form className="settings-form" onSubmit={savePreferences}>
               <h2>Preferences</h2>
               <label><input type="checkbox" checked={preferences.notifications} onChange={() => updatePreference("notifications")} /> Enable operational notifications</label>
               <label><input type="checkbox" checked={preferences.autoRefresh} onChange={() => updatePreference("autoRefresh")} /> Refresh dashboard data automatically</label>
