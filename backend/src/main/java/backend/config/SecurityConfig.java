@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,6 +20,9 @@ import org.springframework.http.HttpMethod;
 public class SecurityConfig {
 
         private final JwtFilter jwtFilter;
+
+        @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:5174}")
+        private String allowedOrigins;
 
 public SecurityConfig(JwtFilter jwtFilter) {
 
@@ -100,9 +104,12 @@ public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration =
             new CorsConfiguration();
 
-    configuration.addAllowedOrigin(
-            "http://localhost:5173"
-    );
+        for (String origin : allowedOrigins.split(",")) {
+                String trimmedOrigin = origin.trim();
+                if (!trimmedOrigin.isEmpty()) {
+                        configuration.addAllowedOrigin(trimmedOrigin);
+                }
+        }
 
     configuration.addAllowedHeader("*");
 
