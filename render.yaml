@@ -20,4 +20,4 @@ services:
       - key: JWT_EXPIRATION_MS
         value: "3600000"
       - key: JPA_DDL_AUTO
-        value: validate
+        value: update
