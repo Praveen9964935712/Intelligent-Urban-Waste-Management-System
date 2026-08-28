@@ -181,7 +181,7 @@ function Login() {
             <button className="submit-button" type="submit" disabled={isSubmitting}>{isSubmitting ? (isRegistering ? "Creating account..." : isResetting ? (otpRequested ? "Resetting password..." : "Sending code...") : "Signing in...") : (isRegistering ? `Create ${registrationRole.toLowerCase()} account` : isResetting ? (otpRequested ? "Reset password" : "Send verification code") : "Sign in")}{!isSubmitting && <ArrowRight size={18} />}</button>
           </form>
           <div className="login-links">
-            {isRegistering ? <button type="button" onClick={() => { setIsRegistering(false); setError(""); setRegistrationComplete(false); }}>Already have an account? Sign in</button> : <><button type="button" onClick={() => beginRegistration("CITIZEN")}>Need a citizen account? Sign up</button><button type="button" onClick={() => beginRegistration("STAFF")}>Need a staff account? Register</button></>}
+            {isRegistering ? <button type="button" onClick={() => { setIsRegistering(false); setError(""); setRegistrationComplete(false); }}>Already have an account? Sign in</button> : <button type="button" onClick={() => beginRegistration("CITIZEN")}>Need a citizen account? Sign up</button>}
             {!isRegistering && !isResetting && <button type="button" onClick={() => { setIsResetting(true); setError(""); setRegistrationComplete(false); }}>Forgot your password?</button>}
             {isResetting && <button type="button" onClick={() => { setIsResetting(false); setOtpRequested(false); setError(""); }}>Back to sign in</button>}
           </div>
