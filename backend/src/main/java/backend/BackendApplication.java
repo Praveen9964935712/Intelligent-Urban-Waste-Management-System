@@ -16,32 +16,30 @@ public class BackendApplication {
     }
 
     @Bean
-    CommandLineRunner createAdmin(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+CommandLineRunner createAdmin(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder) {
 
-        return args -> {
+    return args -> {
 
-            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+        User admin =
+                userRepository
+                        .findByEmail("admin@gmail.com")
+                        .orElse(new User());
 
-                User admin = new User();
+        admin.setName("Administrator");
+        admin.setEmail("admin@gmail.com");
+        admin.setPhone("9999999999");
+        admin.setPassword(
+                passwordEncoder.encode("admin123"));
 
-                admin.setName("Administrator");
-                admin.setEmail("admin@gmail.com");
-                admin.setPhone("9999999999");
-                admin.setPassword(
-                        passwordEncoder.encode("admin123"));
+        admin.setRole("ADMIN");
 
-                admin.setRole("ADMIN");
+        userRepository.save(admin);
 
-                userRepository.save(admin);
-
-                System.out.println("=================================");
-                System.out.println("ADMIN USER CREATED SUCCESSFULLY");
-                System.out.println("Email: admin@gmail.com");
-                System.out.println("Password: admin123");
-                System.out.println("=================================");
-            }
-        };
-    }
+        System.out.println("=================================");
+        System.out.println("ADMIN ROLE FORCED TO ADMIN");
+        System.out.println("=================================");
+    };
 }
+    }
