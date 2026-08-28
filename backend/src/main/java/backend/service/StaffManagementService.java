@@ -80,6 +80,9 @@ public class StaffManagementService {
 
     @Transactional
     public StaffListItemDTO createStaff(StaffManagementRequestDTO request) {
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required when creating staff");
+        }
         Staff staff = new Staff();
         apply(staff, request);
         if (staff.getAvailable() == null) staff.setAvailable(true);
@@ -89,7 +92,7 @@ public class StaffManagementService {
             user.setName(saved.getName());
             user.setEmail(saved.getEmail());
             user.setPhone(saved.getPhone());
-            user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRole("STAFF");
             User savedUser = userRepository.save(user);
             saved.setUserId(savedUser.getId());
@@ -97,6 +100,9 @@ public class StaffManagementService {
         } else {
             User existingUser = userRepository.findByEmail(saved.getEmail()).orElseThrow();
             if (!"STAFF".equalsIgnoreCase(existingUser.getRole())) existingUser.setRole("STAFF");
+            if (request.getPassword() != null && !request.getPassword().isBlank()) {
+                existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
             saved.setUserId(existingUser.getId());
             userRepository.save(existingUser);
             saved = staffRepository.save(saved);
