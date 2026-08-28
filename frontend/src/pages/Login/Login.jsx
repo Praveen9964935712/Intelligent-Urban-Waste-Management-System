@@ -50,7 +50,9 @@ function Login() {
       const data = await loginUser(email, password);
       const token = data.token?.trim();
       const role = data.role?.trim().toUpperCase();
-      if (!token || !role) throw new Error("Login response is missing session data");
+      if (!token || !["ADMIN", "STAFF", "CITIZEN"].includes(role)) {
+        throw new Error("Login response contains an invalid role");
+      }
 
       localStorage.setItem(
         "token",
