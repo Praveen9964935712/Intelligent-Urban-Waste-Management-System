@@ -1,13 +1,16 @@
 package backend.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 
 public class TaskManagementRequestDTO {
     @NotNull(message = "Complaint ID is required")
+    @Positive(message = "Complaint ID must be a positive number")
     private Long complaintId;
 
     @NotNull(message = "Staff ID is required")
+    @Positive(message = "Staff ID must be a positive number")
     private Long staffId;
 
     private LocalDate dueDate;
