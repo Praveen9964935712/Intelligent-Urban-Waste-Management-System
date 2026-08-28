@@ -75,8 +75,7 @@ public class AuthService {
                 user.setEmail(dto.getEmail());
                 user.setPhone(dto.getPhone());
                 user.setPassword(passwordEncoder.encode(dto.getPassword()));
-                String requestedRole = dto.getRole() == null ? "CITIZEN" : dto.getRole().trim().toUpperCase();
-                user.setRole("STAFF".equals(requestedRole) ? "STAFF" : "CITIZEN");
+                user.setRole("CITIZEN");
                 userRepository.save(user);
         }
 }

@@ -91,7 +91,15 @@ public class StaffManagementService {
             user.setPhone(saved.getPhone());
             user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
             user.setRole("STAFF");
-            userRepository.save(user);
+            User savedUser = userRepository.save(user);
+            saved.setUserId(savedUser.getId());
+            saved = staffRepository.save(saved);
+        } else {
+            User existingUser = userRepository.findByEmail(saved.getEmail()).orElseThrow();
+            if (!"STAFF".equalsIgnoreCase(existingUser.getRole())) existingUser.setRole("STAFF");
+            saved.setUserId(existingUser.getId());
+            userRepository.save(existingUser);
+            saved = staffRepository.save(saved);
         }
         return toListItem(saved);
     }
