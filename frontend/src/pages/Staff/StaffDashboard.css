@@ -47,5 +47,10 @@
 .staff-report { padding: 14px; border-radius: 8px; background: #eff7f3; }
 .staff-report span { display: block; color: #708983; font-size: .8rem; }
 .staff-report strong { display: block; margin-top: 5px; font-size: 1.35rem; }
-@media (max-width: 850px) { .staff-kpis { grid-template-columns: repeat(2, 1fr); } .staff-grid { grid-template-columns: 1fr; } }
+.dispatch-panel { margin-top: 24px; }
+.dispatch-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 18px; }
+.dispatch-form label { display: grid; gap: 8px; color: #44625d; font-weight: 600; }
+.dispatch-form input, .dispatch-form select { border: 1px solid #cfe0da; border-radius: 8px; padding: 10px 12px; font: inherit; background: #fff; color: #143d3d; }
+.dispatch-form button { grid-column: span 2; justify-self: end; }
+@media (max-width: 850px) { .staff-kpis { grid-template-columns: repeat(2, 1fr); } .staff-grid { grid-template-columns: 1fr; } .dispatch-form { grid-template-columns: 1fr; } .dispatch-form button { grid-column: span 1; justify-self: stretch; } }
 @media (max-width: 560px) { .staff-dashboard { padding: 20px 14px 36px; } .staff-topbar { margin-bottom: 30px; } .staff-heading { display: block; } .staff-heading button { margin-top: 18px; } .staff-kpis { gap: 8px; } .staff-kpi { padding: 14px; } .staff-kpi strong { font-size: 1.55rem; } .staff-panel { padding: 17px; } }

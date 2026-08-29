@@ -10,6 +10,7 @@ import SettingsPage from "../pages/Admin/SettingsPage";
 import SearchPage from "../pages/Admin/SearchPage";
 import CitizenDashboard from "../pages/Citizen/CitizenDashboard";
 import StaffDashboard from "../pages/Staff/StaffDashboard";
+import WorkerDashboard from "../pages/Worker/WorkerDashboard";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -105,6 +106,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute role="STAFF">
               <StaffDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/worker/dashboard"
+          element={
+            <ProtectedRoute role="WORKER">
+              <WorkerDashboard />
             </ProtectedRoute>
           }
         />

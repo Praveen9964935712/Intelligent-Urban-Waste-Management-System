@@ -50,7 +50,7 @@ function Login() {
       const data = await loginUser(email, password);
       const token = data.token?.trim();
       const role = data.role?.trim().toUpperCase();
-      if (!token || !["ADMIN", "STAFF", "CITIZEN"].includes(role)) {
+      if (!token || !["ADMIN", "STAFF", "CITIZEN", "WORKER"].includes(role)) {
         throw new Error("Login response contains an invalid role");
       }
 
@@ -77,6 +77,8 @@ function Login() {
 
       } else if (role === "STAFF") {
         navigate("/staff/dashboard");
+      } else if (role === "WORKER") {
+        navigate("/worker/dashboard");
       } else {
 
         navigate(

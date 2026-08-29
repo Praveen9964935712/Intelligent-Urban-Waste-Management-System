@@ -11,3 +11,6 @@ export const getStaffComplaintDetail = async (taskId) => (await api.get(`/staff-
 export const updateStaffTaskStatus = async (taskId, status) => (await api.put(`/staff-workflow/tasks/${taskId}/status`, { status }, authConfig())).data;
 export const updateStaffTaskNotes = async (taskId, notes) => (await api.post(`/staff-workflow/tasks/${taskId}/notes`, { notes }, authConfig())).data;
 export const updateStaffAvailability = async (available) => (await api.put("/staff-workflow/me/availability", { available }, authConfig())).data;
+export const getDispatchQueue = async () => (await api.get("/staff-workflow/dispatch/queue", authConfig())).data;
+export const getDispatchTeam = async (zone) => (await api.get("/staff-workflow/dispatch/team", { ...authConfig(), params: { zone } })).data;
+export const assignDispatchTask = async (payload) => (await api.post("/staff-workflow/dispatch/assign", payload, authConfig())).data;
