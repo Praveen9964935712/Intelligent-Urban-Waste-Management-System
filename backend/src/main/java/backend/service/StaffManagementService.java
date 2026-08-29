@@ -137,7 +137,7 @@ public class StaffManagementService {
         if (request.getAvailable() != null) staff.setAvailable(request.getAvailable());
     }
 
-    private StaffListItemDTO toListItem(Staff staff) {
+    public StaffListItemDTO toListItemInternal(Staff staff) {
         List<Task> tasks = taskRepository.findByStaffId(staff.getId());
         StaffListItemDTO result = new StaffListItemDTO();
         result.setId(staff.getId()); result.setName(staff.getName()); result.setEmail(staff.getEmail());
@@ -148,6 +148,10 @@ public class StaffManagementService {
         long completed = tasks.stream().filter(task -> "COMPLETED".equalsIgnoreCase(task.getStatus())).count();
         result.setTaskCompletionRate(tasks.isEmpty() ? 0 : Math.round(completed * 10000.0 / tasks.size()) / 100.0);
         return result;
+    }
+
+    private StaffListItemDTO toListItem(Staff staff) {
+        return toListItemInternal(staff);
     }
 
     private StaffManagementPerformanceDTO performance(List<Task> tasks) {
@@ -169,8 +173,11 @@ public class StaffManagementService {
     }
 
     private StaffAssignedTaskDTO toTask(Task task) {
-        String status = "ASSIGNED".equalsIgnoreCase(task.getStatus()) ? "IN_PROGRESS" : task.getStatus();
-        return new StaffAssignedTaskDTO(task.getId(), task.getComplaintId(), status, task.getAssignedAt(), task.getCompletedAt());
+        return new StaffAssignedTaskDTO(task.getId(), task.getComplaintId(), normalizeStatus(task.getStatus()), task.getAssignedAt(), task.getCompletedAt());
+    }
+
+    private String normalizeStatus(String status) {
+        return status == null ? "" : status.trim().toUpperCase(Locale.ROOT);
     }
 
     private Comparator<StaffListItemDTO> staffComparator(String sortBy, String direction) {

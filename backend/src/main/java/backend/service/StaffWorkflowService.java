@@ -1,5 +1,6 @@
 package backend.service;
 
+import backend.dto.DispatchAssignmentRequestDTO;
 import backend.dto.StaffAssignedComplaintDTO;
 import backend.dto.StaffAssignedTaskDTO;
 import backend.dto.StaffAvailabilityDTO;
@@ -16,6 +17,7 @@ import backend.repository.ComplaintRepository;
 import backend.repository.StaffRepository;
 import backend.repository.TaskMetadataRepository;
 import backend.repository.TaskRepository;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -103,6 +105,53 @@ public class StaffWorkflowService {
         Staff staff = currentStaff(authentication);
         staff.setAvailable(request.getAvailable());
         return staffManagementService.getProfile(staffRepository.save(staff).getId()).getStaff();
+    }
+
+    public List<Complaint> dispatchQueue() {
+        return complaintRepository.findAll().stream()
+                .filter(complaint -> complaint.getStatus() == null || !"RESOLVED".equalsIgnoreCase(complaint.getStatus()))
+                .sorted(Comparator.comparing(Complaint::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
+                .collect(Collectors.toList());
+    }
+
+    public List<StaffListItemDTO> dispatchTeam(String zone) {
+        return staffRepository.findAll().stream()
+                .filter(staff -> Boolean.TRUE.equals(staff.getAvailable()))
+                .filter(staff -> zone == null || zone.isBlank() || zone.equalsIgnoreCase(staff.getZone()))
+                .map(staffManagementService::toListItemInternal)
+                .sorted(Comparator.comparing(StaffListItemDTO::getAssignedTasks))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public StaffAssignedTaskDTO assignTask(DispatchAssignmentRequestDTO request) {
+        Complaint complaint = complaintRepository.findById(request.getComplaintId())
+                .orElseThrow(() -> new IllegalArgumentException("Complaint not found"));
+        Staff staff = staffRepository.findById(request.getStaffId())
+                .orElseThrow(() -> new IllegalArgumentException("Staff member not found"));
+
+        String type = request.getType() == null ? "FIELD" : request.getType().trim().toUpperCase(Locale.ROOT);
+        if (staff.getAvailable() != null && !staff.getAvailable()) {
+            throw new IllegalArgumentException("Staff member is unavailable for assignment");
+        }
+
+        Task task = new Task();
+        task.setComplaintId(complaint.getId());
+        task.setStaffId(staff.getId());
+        task.setStatus("ASSIGNED");
+        task.setAssignedAt(LocalDateTime.now());
+        Task saved = taskRepository.save(task);
+
+        complaint.setStatus("ASSIGNED");
+        if (request.getPriority() != null && !request.getPriority().isBlank()) {
+            complaint.setPriority(request.getPriority().trim().toUpperCase(Locale.ROOT));
+        }
+        if (request.getZone() != null && !request.getZone().isBlank()) {
+            complaint.setZone(request.getZone());
+        }
+        complaintRepository.save(complaint);
+
+        return toTask(saved);
     }
 
     private Staff currentStaff(Authentication authentication) {

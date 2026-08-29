@@ -79,24 +79,20 @@ public java.util.List<ComplaintTrendDTO> getComplaintTrend() {
     public DashboardResponseDTO getDashboardStats() {
 
         DashboardResponseDTO dto = new DashboardResponseDTO();
+        long totalComplaints = complaintRepository.count();
+        long pendingComplaints = complaintRepository.countByStatus("PENDING");
+        long assignedComplaints = complaintRepository.countByStatus("ASSIGNED");
+        long resolvedComplaints = complaintRepository.countByStatus("RESOLVED");
+        long totalStaff = staffRepository.count();
+        long availableStaff = staffRepository.countByAvailableTrue();
 
-        dto.setTotalComplaints(
-                complaintRepository.count());
-
-        dto.setPendingComplaints(
-                complaintRepository.countByStatus("PENDING"));
-
-        dto.setAssignedComplaints(
-                complaintRepository.countByStatus("ASSIGNED"));
-
-        dto.setResolvedComplaints(
-                complaintRepository.countByStatus("RESOLVED"));
-
-        dto.setTotalStaff(
-                staffRepository.count());
-
-        dto.setAvailableStaff(
-                staffRepository.countByAvailableTrue());
+        dto.setTotalComplaints(totalComplaints);
+        dto.setPendingComplaints(pendingComplaints);
+        dto.setAssignedComplaints(assignedComplaints);
+        dto.setResolvedComplaints(resolvedComplaints);
+        dto.setTotalStaff(totalStaff);
+        dto.setStaffMembers(totalStaff);
+        dto.setAvailableStaff(availableStaff);
 
         return dto;
     }
@@ -122,15 +118,17 @@ public java.util.List<ComplaintTrendDTO> getComplaintTrend() {
     public TaskStatsDTO getTaskStats() {
 
     TaskStatsDTO dto = new TaskStatsDTO();
+    long total = taskRepository.count();
+    long completed = taskRepository.countByStatus("COMPLETED");
+    long assigned = taskRepository.countByStatus("ASSIGNED");
+    long pending = taskRepository.countByStatus("PENDING");
+    long inProgress = assigned;
 
-    dto.setAssignedTasks(
-            taskRepository.count());
-
-    dto.setCompletedTasks(
-            taskRepository.countByStatus("COMPLETED"));
-
-    dto.setPendingTasks(
-            taskRepository.countByStatus("ASSIGNED"));
+    dto.setTotalTasks(total);
+    dto.setAssignedTasks(assigned + inProgress);
+    dto.setCompletedTasks(completed);
+    dto.setPendingTasks(pending);
+    dto.setInProgressTasks(inProgress);
 
     return dto;
 }

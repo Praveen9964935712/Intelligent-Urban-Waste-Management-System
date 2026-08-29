@@ -1,5 +1,6 @@
 package backend.controller;
 
+import backend.dto.DispatchAssignmentRequestDTO;
 import backend.dto.StaffAssignedComplaintDTO;
 import backend.dto.StaffAssignedTaskDTO;
 import backend.dto.StaffAvailabilityDTO;
@@ -8,6 +9,7 @@ import backend.dto.StaffListItemDTO;
 import backend.dto.StaffProfileDTO;
 import backend.dto.TaskNoteDTO;
 import backend.dto.TaskStatusUpdateDTO;
+import backend.entity.Complaint;
 import backend.service.StaffWorkflowService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -65,5 +68,20 @@ public class StaffWorkflowController {
     public StaffListItemDTO availability(Authentication authentication,
             @Valid @RequestBody StaffAvailabilityDTO request) {
         return staffWorkflowService.updateAvailability(authentication, request);
+    }
+
+    @GetMapping("/dispatch/queue")
+    public List<Complaint> dispatchQueue() {
+        return staffWorkflowService.dispatchQueue();
+    }
+
+    @GetMapping("/dispatch/team")
+    public List<StaffListItemDTO> dispatchTeam(@RequestParam(required = false) String zone) {
+        return staffWorkflowService.dispatchTeam(zone);
+    }
+
+    @PostMapping("/dispatch/assign")
+    public StaffAssignedTaskDTO assignTask(@Valid @RequestBody DispatchAssignmentRequestDTO request) {
+        return staffWorkflowService.assignTask(request);
     }
 }

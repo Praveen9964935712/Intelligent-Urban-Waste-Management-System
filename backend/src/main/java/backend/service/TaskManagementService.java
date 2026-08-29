@@ -200,10 +200,16 @@ public class TaskManagementService {
 
     private String normalizeStoredStatus(String status) {
         if (status == null || status.isBlank()) return "PENDING";
-        return "IN_PROGRESS".equalsIgnoreCase(status) ? "ASSIGNED" : status.toUpperCase(Locale.ROOT);
+        String normalized = status.trim().toUpperCase(Locale.ROOT);
+        if ("IN_PROGRESS".equals(normalized) || "ASSIGNED".equals(normalized)
+                || "PENDING".equals(normalized) || "COMPLETED".equals(normalized)) {
+            return normalized;
+        }
+        return normalized;
     }
 
     private String displayStatus(String status) {
-        return "ASSIGNED".equalsIgnoreCase(status) ? "IN_PROGRESS" : status;
+        if (status == null || status.isBlank()) return "PENDING";
+        return status.trim().toUpperCase(Locale.ROOT);
     }
 }

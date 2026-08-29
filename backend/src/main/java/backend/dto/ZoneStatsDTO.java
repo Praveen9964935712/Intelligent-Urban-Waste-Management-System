@@ -4,6 +4,7 @@ public class ZoneStatsDTO {
 
     private String zone;
     private Long complaints;
+    private Long resolved;
 
     public ZoneStatsDTO() {
     }
@@ -11,6 +12,7 @@ public class ZoneStatsDTO {
     public ZoneStatsDTO(String zone, Long complaints) {
         this.zone = zone;
         this.complaints = complaints;
+        this.resolved = 0L;
     }
 
     public String getZone() {
@@ -27,5 +29,13 @@ public class ZoneStatsDTO {
 
     public void setComplaints(Long complaints) {
         this.complaints = complaints;
+    }
+
+    public Long getResolved() {
+        return resolved == null ? 0L : resolved;
+    }
+
+    public void setResolved(Long resolved) {
+        this.resolved = resolved;
     }
 }

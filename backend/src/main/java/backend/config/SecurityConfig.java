@@ -72,7 +72,13 @@ public SecurityFilterChain securityFilterChain(
 
         .requestMatchers(
                 "/api/staff-workflow/**"
-        ).hasRole("STAFF")
+        ).hasAnyRole("STAFF", "ADMIN")
+
+        .requestMatchers(
+                "/api/workers/**",
+                "/api/worker-assignments/**",
+                "/api/navigation/**"
+        ).hasAnyRole("ADMIN", "STAFF", "WORKER")
 
                .requestMatchers(HttpMethod.POST, "/api/complaints").hasRole("CITIZEN")
 
