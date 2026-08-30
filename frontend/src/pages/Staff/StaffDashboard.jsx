@@ -95,15 +95,35 @@ function StaffDashboard() {
       setError("Select a complaint and a field resource before assigning.");
       return;
     }
+    const complaintToAssign = (dispatchQueue || []).find((complaint) => String(complaint.id) === String(selectedAssignment.complaintId));
     setSaving(true); setError("");
     try {
-      await assignDispatchTask({
+      const assignedTask = await assignDispatchTask({
         complaintId: Number(selectedAssignment.complaintId),
         staffId: Number(selectedAssignment.staffId),
         type: selectedAssignment.type,
         priority: selectedAssignment.priority,
         zone: selectedAssignment.zone || profile?.staff?.zone || "",
       });
+
+      if (complaintToAssign) {
+        const nextComplaint = {
+          ...complaintToAssign,
+          priority: selectedAssignment.priority || complaintToAssign.priority,
+          status: assignedTask?.status || "ASSIGNED",
+          zone: selectedAssignment.zone || complaintToAssign.zone || profile?.staff?.zone || "",
+        };
+        setComplaints((current) => [nextComplaint, ...current.filter((complaint) => complaint.id !== complaintToAssign.id)]);
+      }
+
+      setTasks((current) => [{
+        id: assignedTask?.id || Date.now(),
+        complaintId: Number(selectedAssignment.complaintId),
+        status: assignedTask?.status || "ASSIGNED",
+        assignedAt: assignedTask?.assignedAt || new Date().toISOString(),
+        completedAt: assignedTask?.completedAt || null,
+      }, ...current]);
+
       setSelectedAssignment({ complaintId: "", staffId: "", type: "WORKER", priority: "MEDIUM", zone: profile?.staff?.zone || "" });
       await loadDashboard();
     } catch (requestError) {
